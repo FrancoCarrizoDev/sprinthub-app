@@ -2,8 +2,6 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/app/components/ui/button";
 import { UserAuthForm } from "@/app/components/user-auth-form";
 
 export const metadata: Metadata = {
@@ -15,15 +13,6 @@ export default function AuthenticationPage() {
   return (
     <>
       <div className="container relative flex min-h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
-        <Link
-          href="/examples/authentication"
-          className={cn(
-            buttonVariants({ variant: "ghost" }),
-            "absolute right-4 top-4 md:right-8 md:top-8"
-          )}
-        >
-          Login
-        </Link>
         <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
           <div className="absolute inset-0 bg-zinc-900" />
           <div className="relative z-20 flex items-center text-lg font-medium">
@@ -41,6 +30,7 @@ export default function AuthenticationPage() {
             </svg>
             SprintHub
           </div>
+
           <div className="mt-8 z-10">
             <Image
               src="/login_background.webp"
@@ -60,8 +50,13 @@ export default function AuthenticationPage() {
             </blockquote>
           </div>
         </div>
-        <div className="lg:p-8">
-          <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+        <div className="lg:p-8 h-full">
+          <div className="w-full flex justify-end ">
+            <Link href="/auth/register" className="text-white">
+              Crear cuenta
+            </Link>
+          </div>
+          <div className="h-full mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">
                 Iniciar sesión en tu cuenta
@@ -70,6 +65,7 @@ export default function AuthenticationPage() {
                 Ingresa tus credenciales o usa Google para iniciar sesión
               </p>
             </div>
+
             <UserAuthForm />
             <p className="px-8 text-center text-sm text-muted-foreground">
               Al hacer clic en continuar, aceptas nuestros{" "}

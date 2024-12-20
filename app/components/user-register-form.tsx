@@ -8,26 +8,28 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { cn } from "@/lib/utils";
-import { userAuthSchema } from "@/lib/validations/auth";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
 import { Icons } from "@/app/components/icons";
+import { userRegisterSchema } from "@/lib/validations/register";
 
-type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
+type UserRegisterFormProps = React.HTMLAttributes<HTMLDivElement>;
 
-type FormData = z.infer<typeof userAuthSchema>;
+type FormData = z.infer<typeof userRegisterSchema>;
 
-export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+export function UserRegisterForm({
+  className,
+  ...props
+}: UserRegisterFormProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(userAuthSchema),
+    resolver: zodResolver(userRegisterSchema),
   });
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [isGoogleLoading, setIsGoogleLoading] = React.useState<boolean>(false);
   const searchParams = useSearchParams();
 
   async function onSubmit(data: FormData) {
@@ -45,6 +47,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     if (!signInResult?.ok) {
       return console.error("Something went wrong!");
     }
+
+    console.log("Check your email");
   }
 
   return (
@@ -62,7 +66,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
-              disabled={isLoading || isGoogleLoading}
+              disabled={isLoading}
               {...register("email")}
             />
             {errors?.email && (
@@ -73,14 +77,14 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           </div>
           <div className="grid gap-1">
             <Label className="sr-only" htmlFor="email">
-              Email
+              Contraseña
             </Label>
             <Input
               id="password"
               placeholder="********"
               type="password"
               autoComplete="current-password"
-              disabled={isLoading || isGoogleLoading}
+              disabled={isLoading}
               {...register("password")}
             />
             {errors?.email && (
@@ -93,39 +97,10 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Iniciar sesión con Email
+            Crear cuenta
           </Button>
         </div>
       </form>
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            O continúa con
-          </span>
-        </div>
-      </div>
-      <Button
-        variant="outline"
-        type="button"
-        className="w-full"
-        disabled={isLoading || isGoogleLoading}
-        onClick={() => {
-          setIsGoogleLoading(true);
-          signIn("google", {
-            callbackUrl: searchParams?.get("from") || "/",
-          });
-        }}
-      >
-        {isGoogleLoading ? (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <Icons.google className="mr-2 h-4 w-4" />
-        )}{" "}
-        Google
-      </Button>
     </div>
   );
 }
