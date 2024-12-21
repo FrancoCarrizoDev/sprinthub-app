@@ -1,8 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -13,6 +11,7 @@ import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
 import { Icons } from "@/app/components/icons";
 import { userRegisterSchema } from "@/lib/validations/register";
+import registerUser from "../services/auth.service";
 
 type UserRegisterFormProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -30,25 +29,21 @@ export function UserRegisterForm({
     resolver: zodResolver(userRegisterSchema),
   });
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const searchParams = useSearchParams();
 
   async function onSubmit(data: FormData) {
     setIsLoading(true);
 
-    const signInResult = await signIn("credentials", {
-      email: data.email.toLowerCase(),
-      password: data.password,
-      redirect: true,
-      callbackUrl: searchParams?.get("from") || "/",
-    });
+    const registerResponse = await registerUser(data);
 
     setIsLoading(false);
 
-    if (!signInResult?.ok) {
+    if (!registerResponse?.ok) {
       return console.error("Something went wrong!");
     }
 
-    console.log("Check your email");
+    const dataResponse = await registerResponse.json();
+
+    console.log(dataResponse);
   }
 
   return (

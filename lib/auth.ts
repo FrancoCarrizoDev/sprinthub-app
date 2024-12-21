@@ -20,7 +20,7 @@ export const authConfig: NextAuthOptions = {
         },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         // Add logic here to look up the user from the credentials supplied
         if (!credentials?.email || !credentials?.password) {
           return null;
@@ -55,6 +55,9 @@ export const authConfig: NextAuthOptions = {
         return {
           token: user.token,
           email: credentials.email,
+          id: "1",
+          image: "",
+          name: "John Doe",
         };
       },
     }),
