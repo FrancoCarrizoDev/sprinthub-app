@@ -1,5 +1,6 @@
 export interface oAuthUserDto {
-  name: string;
+  firstName: string;
+  lastName?: string;
   email: string;
   externalId: string;
 }

@@ -85,10 +85,13 @@ export const authConfig: NextAuthOptions = {
         return false;
       }
 
+      console.log({ user, account });
+
       const oauthUser: oAuthUserDto = {
         email: user.email,
         externalId: user.id,
-        name: user.name,
+        firstName: user.name,
+        lastName: undefined,
       };
 
       const userRequest = await fetch(
