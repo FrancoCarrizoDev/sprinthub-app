@@ -50,14 +50,14 @@ export const authConfig: NextAuthOptions = {
           return null;
         }
 
-        console.log({ user });
-
         return {
           token: user.token,
           email: credentials.email,
           id: "1",
           image: "",
           name: "John Doe",
+          provider: "credentials",
+          id_token: "1",
         };
       },
     }),
@@ -85,7 +85,7 @@ export const authConfig: NextAuthOptions = {
         return false;
       }
 
-      console.log({ user, account });
+      // console.log({ user, account });
 
       const oauthUser: oAuthUserDto = {
         email: user.email,
@@ -94,17 +94,15 @@ export const authConfig: NextAuthOptions = {
         lastName: undefined,
       };
 
-      const userRequest = await fetch(
-        "http://localhost:8080/api/auth/signing",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${account.id_token}`,
-          },
-          body: JSON.stringify(oauthUser),
-        }
-      );
+      const userRequest = await fetch("http://localhost:8080/api/auth/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${account.id_token}`,
+          "X-Auth-Strategy": "google",
+        },
+        body: JSON.stringify(oauthUser),
+      });
 
       if (!userRequest.ok) {
         return false;
@@ -118,6 +116,10 @@ export const authConfig: NextAuthOptions = {
         session.user.id_token = token.id_token as string;
       }
 
+      if (token?.provider) {
+        session.user.provider = token.provider as string;
+      }
+
       return session;
     },
     async jwt({ token, user, account, profile, isNewUser }) {
@@ -125,6 +127,9 @@ export const authConfig: NextAuthOptions = {
       if (account?.id_token) {
         token.id_token = account.id_token;
         token.sub = account.sub as string;
+      }
+      if (account?.provider === "google") {
+        token.provider = "google";
       }
       return { ...token, ...user };
     },

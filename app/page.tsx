@@ -5,6 +5,7 @@ import LogoutButton from "./components/LogoutButton";
 
 export default async function Home() {
   const session = await getServerSession(authConfig);
+  console.log({ session });
 
   if (!session) redirect("/auth/login");
 
